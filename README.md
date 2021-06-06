@@ -10,3 +10,15 @@
 pyenv install 3.9.5
 poetry install
 ```
+
+### Running the server
+
+```sh
+poetry run uvicorn food_products_api:app
+```
+
+### Running the tests
+
+```sh
+poetry run pytest
+```
