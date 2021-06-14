@@ -7,7 +7,7 @@ app = celery.Celery("food_products_api.worker")
 
 
 app.conf.update(
-    BROKER_URL=os.environ["REDIS_URL"],
-    CELERY_RESULT_BACKEND=os.environ["REDIS_URL"],
-    CELERY_TASK_SERIALIZER="json",
+    broker_url=os.environ["REDIS_URL"],
+    result_backend=os.environ["REDIS_URL"],
+    task_serializer="json",
 )
