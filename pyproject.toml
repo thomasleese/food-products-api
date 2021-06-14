@@ -8,6 +8,7 @@ authors = ["Thomas Leese <thomas@leese.io>"]
 fastapi = "^0.65"
 gunicorn = "^20.1"
 python = "^3.9"
+redis = "^3.5"
 requests = "^2.25"
 uvicorn = "^0.14"
 
