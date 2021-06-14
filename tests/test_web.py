@@ -1,7 +1,7 @@
 from fastapi.testclient import TestClient
 import responses
 
-from food_products_api import app
+from food_products_api.web import app
 
 
 client = TestClient(app)
