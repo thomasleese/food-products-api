@@ -44,5 +44,7 @@ class Serializer:
         return {
             "serving_size": self.product["serving_size"],
             "per_100g": self.build_nutrition_data(self.product["nutriments"], "100g"),
-            "per_serving": self.build_nutrition_data(self.product["nutriments"], "serving"),
+            "per_serving": self.build_nutrition_data(
+                self.product["nutriments"], "serving"
+            ),
         }

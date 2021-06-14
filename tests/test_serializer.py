@@ -24,7 +24,7 @@ def test_product_with_all_fields():
             "sugars_100g": 10,
             "proteins_serving": 10,
             "proteins_100g": 10,
-        }
+        },
     }
 
     serialization = Serializer(product).data
