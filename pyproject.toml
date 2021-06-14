@@ -5,6 +5,7 @@ description = "Read and write information about different food products, powered
 authors = ["Thomas Leese <thomas@leese.io>"]
 
 [tool.poetry.dependencies]
+celery = "^5.1"
 fastapi = "^0.65"
 gunicorn = "^20.1"
 python = "^3.9"
