@@ -12,7 +12,21 @@ requests = "^2.25"
 uvicorn = "^0.14"
 
 [tool.poetry.dev-dependencies]
+black = "^21.6b0"
+flake8 = "^3.9"
+flake8-bugbear = "^21.4"
 pytest = "^6.2"
+pytest-cov = "^2.12"
+responses = "^0.13"
+
+[tool.coverage.run]
+branch = true
+source = ["src"]
+
+[tool.coverage.report]
+skip_covered = true
+show_missing = true
+fail_under = 100
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
