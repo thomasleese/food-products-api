@@ -1,7 +1,8 @@
 from fastapi.testclient import TestClient
 import responses
 
-from food_products_api.web import app
+from food_products_api.cache import Product
+from food_products_api.web import app, cache
 
 
 client = TestClient(app)
@@ -11,7 +12,7 @@ client = TestClient(app)
 def test_read_product():
     responses.add(
         responses.GET,
-        "https://world.openfoodfacts.org/api/v0/product/abc.json",
+        "https://world-en.openfoodfacts.org/api/v0/product/abc.json",
         json={
             "product": {
                 "code": "abc",
@@ -39,6 +40,12 @@ def test_read_product():
             }
         },
     )
+
+    product = Product("abc")
+    del cache[product]
+
+    response = client.get("/abc")
+    assert response.status_code == 200
 
     response = client.get("/abc")
     assert response.status_code == 200
