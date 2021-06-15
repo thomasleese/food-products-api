@@ -1,12 +1,8 @@
-from unittest import mock
-
 from fastapi.testclient import TestClient
 import responses
 
 from food_products_api.cache import Product
-
-with mock.patch.dict("os.environ", {"REDIS_URL": "redis://localhost"}, clear=True):
-    from food_products_api.web import app, cache
+from food_products_api.web import app, cache
 
 
 client = TestClient(app)

@@ -1,14 +1,6 @@
-from unittest import mock
-
 import responses
 
-
-with mock.patch.dict("os.environ", {"REDIS_URL": "redis://localhost"}, clear=True):
-    from food_products_api.worker import app, cache_save
-
-
-def test_app():
-    assert app
+from food_products_api.worker import app, cache_save
 
 
 @responses.activate
