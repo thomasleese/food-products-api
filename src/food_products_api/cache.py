@@ -18,6 +18,9 @@ class Product(NamedTuple):
 
 
 class Cache:
+    URL = "https://world-{locale}.openfoodfacts.org/api/v0/product/{code}.json"
+    EXPIRATION = (30 * 24 * 60 * 60)  # 30 days
+
     def __init__(self):
         self.redis = redis.Redis.from_url(os.environ["REDIS_URL"])
 
@@ -25,10 +28,10 @@ class Cache:
         return json.loads(self.redis[product.cache_key])
 
     def __setitem__(self, product, data):
-        self.redis[product.cache_key] = json.dumps(data)
+        self.redis.set(product.cache_key, json.dumps(data), ex=self.EXPIRATION)
 
     def save(self, product):
-        url = f"https://world-{product.locale}.openfoodfacts.org/api/v0/product/{product.code}.json"
+        url = self.URL.format(**product._asdict())
         headers = {
             "User-Agent": "Food Products API - https://github.com/orycion/food-products-api"
         }

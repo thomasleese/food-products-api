@@ -14,7 +14,7 @@ def read_product(code: str):
 
     try:
         response = cache[product]
-        cache_save.delay()
+        cache_save.delay(product.code, product.locale)
     except KeyError:
         response = cache.save(product)
 
