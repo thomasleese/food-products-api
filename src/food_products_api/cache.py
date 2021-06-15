@@ -19,7 +19,7 @@ class Product(NamedTuple):
 
 class Cache:
     URL = "https://world-{locale}.openfoodfacts.org/api/v0/product/{code}.json"
-    EXPIRATION = (30 * 24 * 60 * 60)  # 30 days
+    EXPIRATION = 30 * 24 * 60 * 60  # 30 days
 
     def __init__(self):
         self.redis = redis.Redis.from_url(os.environ["REDIS_URL"])
@@ -29,6 +29,9 @@ class Cache:
 
     def __setitem__(self, product, data):
         self.redis.set(product.cache_key, json.dumps(data), ex=self.EXPIRATION)
+
+    def __delitem__(self, product):
+        del self.redis[product.cache_key]
 
     def save(self, product):
         url = self.URL.format(**product._asdict())

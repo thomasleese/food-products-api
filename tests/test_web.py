@@ -1,18 +1,19 @@
+from unittest import mock
+
 from fastapi.testclient import TestClient
-import pytest
 import responses
 
+from food_products_api.cache import Product
 
-@pytest.fixture
-def client(monkeypatch):
-    monkeypatch.setenv("REDIS_URL", "redis://localhost")
-    from food_products_api.web import app
+with mock.patch.dict("os.environ", {"REDIS_URL": "redis://localhost"}, clear=True):
+    from food_products_api.web import app, cache
 
-    return TestClient(app)
+
+client = TestClient(app)
 
 
 @responses.activate
-def test_read_product(client):
+def test_read_product():
     responses.add(
         responses.GET,
         "https://world-en.openfoodfacts.org/api/v0/product/abc.json",
@@ -43,6 +44,12 @@ def test_read_product(client):
             }
         },
     )
+
+    product = Product("abc")
+    del cache[product]
+
+    response = client.get("/abc")
+    assert response.status_code == 200
 
     response = client.get("/abc")
     assert response.status_code == 200
