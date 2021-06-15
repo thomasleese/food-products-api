@@ -1,6 +1,6 @@
 import responses
 
-from food_products_api.worker import app, cache_save
+from food_products_api.worker import cache_save
 
 
 @responses.activate
