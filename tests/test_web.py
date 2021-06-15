@@ -1,17 +1,21 @@
 from fastapi.testclient import TestClient
+import pytest
 import responses
 
-from food_products_api.web import app
 
+@pytest.fixture
+def client(monkeypatch):
+    monkeypatch.setenv("REDIS_URL", "redis://localhost")
+    from food_products_api.web import app
 
-client = TestClient(app)
+    return TestClient(app)
 
 
 @responses.activate
-def test_read_product():
+def test_read_product(client):
     responses.add(
         responses.GET,
-        "https://world.openfoodfacts.org/api/v0/product/abc.json",
+        "https://world-en.openfoodfacts.org/api/v0/product/abc.json",
         json={
             "product": {
                 "code": "abc",
