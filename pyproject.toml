@@ -25,6 +25,7 @@ responses = "^0.13"
 [tool.pytest.ini_options]
 env = [
     "REDIS_URL = redis://localhost",
+    "BEARER_TOKENS = test1,test2"
 ]
 
 [tool.coverage.run]

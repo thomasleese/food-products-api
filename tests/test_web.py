@@ -8,6 +8,16 @@ from food_products_api.web import app, cache
 client = TestClient(app)
 
 
+def test_read_product_no_bearer_token():
+    response = client.get("/en/abc")
+    assert response.status_code == 403
+
+
+def test_read_product_invalid_bearer_token():
+    response = client.get("/en/abc", headers={"Authorization": "Bearer invalid"})
+    assert response.status_code == 401
+
+
 @responses.activate
 def test_read_product():
     responses.add(
@@ -44,8 +54,8 @@ def test_read_product():
     product = Product("abc")
     del cache[product]
 
-    response = client.get("/en/abc")
+    response = client.get("/en/abc", headers={"Authorization": "Bearer test1"})
     assert response.status_code == 200
 
-    response = client.get("/en/abc")
+    response = client.get("/en/abc", headers={"Authorization": "Bearer test2"})
     assert response.status_code == 200
