@@ -44,8 +44,8 @@ def test_read_product():
     product = Product("abc")
     del cache[product]
 
-    response = client.get("/abc")
+    response = client.get("/en/abc")
     assert response.status_code == 200
 
-    response = client.get("/abc")
+    response = client.get("/en/abc")
     assert response.status_code == 200

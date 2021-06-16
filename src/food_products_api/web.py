@@ -8,9 +8,9 @@ app = FastAPI()
 cache = Cache()
 
 
-@app.get("/{code}")
-def read_product(code: str):
-    product = Product(code)
+@app.get("/{locale}/{code}")
+def read_product(locale: str, code: str):
+    product = Product(code, locale)
 
     try:
         response = cache[product]
