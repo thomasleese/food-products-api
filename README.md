@@ -14,7 +14,7 @@ poetry install
 ### Running the server
 
 ```sh
-poetry run uvicorn food_products_api:app
+poetry run uvicorn food_products_api.web:app
 ```
 
 ### Running the tests
