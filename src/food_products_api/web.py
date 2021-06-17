@@ -3,16 +3,22 @@ import os
 from fastapi import Depends, FastAPI, Request, HTTPException, status
 from fastapi.responses import JSONResponse
 from fastapi.security import HTTPBearer
+import sentry_sdk
+from sentry_sdk.integrations.asgi import SentryAsgiMiddleware
 
 from .cache import Cache, Product, ProductNotFound
 from .worker import cache_save
 
+
+sentry_sdk.init(traces_sample_rate=0.1)
 
 app = FastAPI()
 cache = Cache()
 
 allowed_bearer_tokens = os.environ["BEARER_TOKENS"].split(",")
 bearer_token_scheme = HTTPBearer()
+
+app.add_middleware(SentryAsgiMiddleware)
 
 
 def check_bearer_token(token: str = Depends(bearer_token_scheme)):
