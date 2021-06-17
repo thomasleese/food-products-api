@@ -1,9 +1,10 @@
 import os
 
-from fastapi import Depends, FastAPI, HTTPException, status
+from fastapi import Depends, FastAPI, Request, HTTPException, status
+from fastapi.responses import JSONResponse
 from fastapi.security import HTTPBearer
 
-from .cache import Cache, Product
+from .cache import Cache, Product, ProductNotFound
 from .worker import cache_save
 
 
@@ -22,6 +23,14 @@ def check_bearer_token(token: str = Depends(bearer_token_scheme)):
             headers={"WWW-Authenticate": "Bearer"},
         )
     return token
+
+
+@app.exception_handler(ProductNotFound)
+def product_not_found_exception_handler(request: Request, exc: ProductNotFound):
+    return JSONResponse(
+        status_code=404,
+        content={"message": "Product could not be found."},
+    )
 
 
 @app.get("/{locale}/{code}")

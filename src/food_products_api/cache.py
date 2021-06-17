@@ -17,6 +17,11 @@ class Product(NamedTuple):
         return f"product:{self.locale}:{self.code}"
 
 
+class ProductNotFound(LookupError):
+    def __init__(self, product):
+        super().__init__(product.code)
+
+
 class Cache:
     URL = "https://world-{locale}.openfoodfacts.org/api/v0/product/{code}.json"
     EXPIRATION = 30 * 24 * 60 * 60  # 30 days
@@ -39,7 +44,12 @@ class Cache:
             "User-Agent": "Food Products API - https://github.com/orycion/food-products-api"
         }
         response = requests.get(url, headers=headers)
-        data = Serializer(response.json()["product"]).data
+        json = response.json()
 
-        self[product] = data
-        return data
+        try:
+            data = Serializer(json["product"]).data
+        except KeyError:
+            raise ProductNotFound(product)
+        else:
+            self[product] = data
+            return data
