@@ -19,6 +19,18 @@ def test_read_product_invalid_bearer_token():
 
 
 @responses.activate
+def test_read_product_not_found():
+    responses.add(
+        responses.GET,
+        "https://world-en.openfoodfacts.org/api/v0/product/not-found.json",
+        json={"code": "not-found", "status": 0, "status_verbose": "product not found"},
+    )
+
+    response = client.get("/en/not-found", headers={"Authorization": "Bearer test1"})
+    assert response.status_code == 404
+
+
+@responses.activate
 def test_read_product():
     responses.add(
         responses.GET,
