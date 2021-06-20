@@ -1,4 +1,36 @@
+from decimal import Decimal
+from typing import NamedTuple
+
+
 class Serializer:
+    class NutritionField(NamedTuple):
+        input_name: str
+        output_name: str
+        units: str = "g"
+        multiplier: Decimal = 1
+
+    TO_MILLI = Decimal("0.001")
+
+    NUTRITION_FIELDS = [
+        NutritionField("energy", "energy", "kJ"),
+        NutritionField("fat", "fat"),
+        NutritionField("saturated_fat", "saturated-fat"),
+        NutritionField("monounsaturated_fat", "monounsaturated-fat"),
+        NutritionField("polyunsaturated_fat", "polyunsaturated-fat"),
+        NutritionField("cholesterol", "cholesterol", "mg", TO_MILLI),
+        NutritionField("carbohydrates", "carbohydrates"),
+        NutritionField("fiber", "fiber", "mg", TO_MILLI),
+        NutritionField("sugar", "sugars"),
+        NutritionField("protein", "proteins"),
+        NutritionField("calcium", "calcium", "mg", TO_MILLI),
+        NutritionField("iron", "iron", "mg", TO_MILLI),
+        NutritionField("potassium", "potassium", "mg", TO_MILLI),
+        NutritionField("sodium", "sodium", "mg", TO_MILLI),
+        NutritionField("vitamin_a", "vitamin-a", "mg", TO_MILLI),
+        NutritionField("vitamin_c", "vitamin-c", "mg", TO_MILLI),
+        NutritionField("vitamin_d", "vitamin-d", "mg", TO_MILLI),
+    ]
+
     def __init__(self, open_food_facts_product):
         self.product = open_food_facts_product
 
@@ -21,23 +53,17 @@ class Serializer:
 
     @classmethod
     def build_nutrition_data(cls, data, suffix):
-        return {
-            "energy": data[f"energy_{suffix}"],
-            "fat": data[f"fat_{suffix}"],
-            "saturated_fat": data[f"saturated-fat_{suffix}"],
-            "cholesterol": data.get(f"cholesterol_{suffix}"),
-            "carbohydrates": data[f"carbohydrates_{suffix}"],
-            "fiber": data[f"fiber_{suffix}"],
-            "sugar": data[f"sugars_{suffix}"],
-            "protein": data[f"proteins_{suffix}"],
-            "calcium": data.get(f"calcium_{suffix}"),
-            "iron": data.get(f"iron_{suffix}"),
-            "potassium": data.get(f"potassium_{suffix}"),
-            "sodium": data.get(f"sodium_{suffix}"),
-            "vitamin_a": data.get(f"vitamin-a_{suffix}"),
-            "vitamin_c": data.get(f"vitamin-c_{suffix}"),
-            "vitamin_d": data.get(f"vitamin-d_{suffix}"),
-        }
+        output = {}
+
+        for field in cls.NUTRITION_FIELDS:
+            name = f"{field.output_name}_{field.units}"
+            if str_value := data.get(f"{field.input_name}_{suffix}"):
+                value = str(Decimal(str_value) * field.multiplier)
+            else:
+                value = None
+            output[name] = value
+
+        return output
 
     @property
     def nutrition_data(self):
