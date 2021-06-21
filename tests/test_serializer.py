@@ -1,3 +1,5 @@
+import pytest
+
 from food_products_api.serializer import Serializer
 
 
@@ -30,3 +32,13 @@ def test_product_with_all_fields():
     serialization = Serializer(product).data
 
     assert serialization["name"] == "Product Name"
+
+
+@pytest.mark.parametrize(
+    "input,output_value,output_units", [("100g", "100", "g"), ("50 ml", "50", "ml")]
+)
+def test_parse_size(input, output_value, output_units):
+    assert Serializer.parse_size(input) == {
+        "value": output_value,
+        "units": output_units,
+    }
