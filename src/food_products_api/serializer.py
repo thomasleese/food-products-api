@@ -1,8 +1,28 @@
 from decimal import Decimal
+import re
 from typing import NamedTuple
 
 
 class Serializer:
+    def __init__(self, open_food_facts_product):
+        self.product = open_food_facts_product
+
+    @property
+    def data(self):
+        return {
+            "code": self.product["code"],
+            "name": self.product["product_name"],
+            "brand": self.brand_data,
+            "servings": self.servings_data,
+        }
+
+    @property
+    def brand_data(self):
+        return {
+            "slug": "-".join(self.product["brands_tags"]),
+            "name": self.product["brands"],
+        }
+
     class NutritionField(NamedTuple):
         input_name: str
         output_name: str
@@ -31,26 +51,6 @@ class Serializer:
         NutritionField("vitamin_d", "vitamin-d", "mg", TO_MILLI),
     ]
 
-    def __init__(self, open_food_facts_product):
-        self.product = open_food_facts_product
-
-    @property
-    def data(self):
-        return {
-            "code": self.product["code"],
-            "name": self.product["product_name"],
-            "brand": self.brand_data,
-            "quantity": self.product["quantity"],
-            "nutrition": self.nutrition_data,
-        }
-
-    @property
-    def brand_data(self):
-        return {
-            "slug": "-".join(self.product["brands_tags"]),
-            "name": self.product["brands"],
-        }
-
     @classmethod
     def build_nutrition_data(cls, data, suffix):
         output = {}
@@ -65,12 +65,29 @@ class Serializer:
 
         return output
 
-    @property
-    def nutrition_data(self):
+    SIZE_REGEX = re.compile(r"^(\d+)\s*(\w+)$")
+
+    @classmethod
+    def parse_size(cls, string):
+        match = cls.SIZE_REGEX.match(string)
         return {
-            "serving_size": self.product["serving_size"],
-            "per_100g": self.build_nutrition_data(self.product["nutriments"], "100g"),
-            "per_serving": self.build_nutrition_data(
-                self.product["nutriments"], "serving"
-            ),
+            "value": str(Decimal(match.group(1))),
+            "units": match.group(2),
         }
+
+    @property
+    def servings_data(self):
+        nutriments = self.product["nutriments"]
+        serving_size = self.product["serving_size"]
+        standard_size = "100" + ("ml" if "ml" in serving_size else "g")
+
+        return [
+            {
+                "size": self.parse_size(serving_size),
+                "nutrition": self.build_nutrition_data(nutriments, "serving"),
+            },
+            {
+                "size": self.parse_size(standard_size),
+                "nutrition": self.build_nutrition_data(nutriments, "100g"),
+            },
+        ]
