@@ -7,7 +7,7 @@
 ## Getting started
 
 ```sh
-pyenv install 3.9.5
+pyenv install 3.9.7
 poetry install
 ```
 
