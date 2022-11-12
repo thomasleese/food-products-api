@@ -5,23 +5,23 @@ description = "Reference information about different food products, powered by O
 authors = ["Thomas Leese <thomas@leese.io>"]
 
 [tool.poetry.dependencies]
-celery = "^5.1"
-fastapi = "^0.68"
+celery = "^5.2"
+fastapi = "^0.86"
 gunicorn = "^20.1"
 python = "^3.11"
-redis = "^3.5"
-requests = "^2.26"
-sentry-sdk = "^1.4"
-uvicorn = "^0.15"
+redis = "^4.3"
+requests = "^2.28"
+sentry-sdk = "^1.10"
+uvicorn = "^0.19"
 
 [tool.poetry.dev-dependencies]
-black = "^21.11b1"
-flake8 = "^3.9"
-flake8-bugbear = "^21.9"
-pytest = "^6.2"
-pytest-cov = "^2.12"
-pytest-env = "^0.6"
-responses = "^0.14"
+black = "^22.10"
+flake8 = "^5.0"
+flake8-bugbear = "^22.10"
+pytest = "^7.2"
+pytest-cov = "^4.0"
+pytest-env = "^0.8"
+responses = "^0.22"
 
 [tool.pytest.ini_options]
 env = [
