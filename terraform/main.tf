@@ -83,6 +83,13 @@ resource "digitalocean_app" "main" {
         path = "/"
       }
     }
+
+    database {
+      name       = "cache"
+      engine     = "REDIS"
+      version    = "7"
+      production = false
+    }
   }
 }
 
