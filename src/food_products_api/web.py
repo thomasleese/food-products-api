@@ -1,13 +1,12 @@
 import os
 
-from fastapi import Depends, FastAPI, Request, HTTPException, status
+from fastapi import BackgroundTasks, Depends, FastAPI, Request, HTTPException, status
 from fastapi.responses import JSONResponse
 from fastapi.security import HTTPBearer
 import sentry_sdk
 from sentry_sdk.integrations.asgi import SentryAsgiMiddleware
 
 from .cache import Cache, Product, ProductNotFound
-from .worker import cache_save
 
 
 sentry_sdk.init(traces_sample_rate=0.1)
@@ -41,14 +40,18 @@ def product_not_found_exception_handler(request: Request, exc: ProductNotFound):
 
 @app.get("/{locale}/{code}")
 def read_product(
-    locale: str, code: str, bearer_token: str = Depends(check_bearer_token)
+    locale: str,
+    code: str,
+    background_tasks: BackgroundTasks,
+    bearer_token: str = Depends(check_bearer_token),
 ):
     product = Product(code, locale)
 
     try:
         response = cache[product]
-        cache_save.delay(product.code, product.locale)
     except KeyError:
         response = cache.save(product)
+    else:
+        background_tasks.add_task(cache.save, product)
 
     return response
